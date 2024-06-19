@@ -20,14 +20,6 @@ router.get('/', async (request: Request, response: Response) => {
     await controller.getAllProducts(request, response);
   });
 
-router.post('/', (req: Request, res: Response) => {
-    // Fetched the user using body data
-    console.log("req.body: " ,req.body);
-    const product: Product = req.body;
-
-    console.log(product);
-    // Assign the user in fake_db with id as a index
-    ServerGlobal.getInstance().products.push(product);
-
-    res.json(product);
+router.post('/', async (req: Request, res: Response) => {
+    await controller.createNewProduct(req, res);
 });
