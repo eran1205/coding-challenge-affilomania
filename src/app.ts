@@ -1,16 +1,16 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
+import { router } from './routes';
+
+const post = process.env.PORT || 3000;
+
 const app = express();
-const APP_PORT = process.env.PORT || 3000;
 
 // routes
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello World!');
+app.use('/', router);
+// app.get('/', (req: Request, res: Response) => {
+//   res.send('Hello World!');
+// });
+
+app.listen(post, () => {
+  console.log(`Server started on port ${post}`);
 });
-
-// some more stuff
-
-app.listen(APP_PORT, () => {
-  console.log(`Server started on port ${APP_PORT}`);
-});
-
-// end
