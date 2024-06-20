@@ -121,7 +121,7 @@ export class ProductsController {
         }
 
         foundProduct.updated_at = new Date().toISOString();
-        return response.status(200).send(updatedData);
+        return response.status(200).send(foundProduct);
     }
 
     public async deleteProduct(request: Request, response: Response): Promise<unknown> {
