@@ -18,31 +18,33 @@ export class ProductsController {
         const sortOrder = request.query.orderBy as 'asc' | 'desc' | undefined;
         const queryName = request.query.searchByName as string;
         const queryDesc = request.query.searchByDesc as string;
+        
         let allProducts: Product[] = await this._repository.findAll();
 
+        // Incase no sorting is requested, the default is created_at field
         if(sortBy == undefined || sortBy.toString() == "") {
             sortBy = "created_at";
         }
 
         if (sortBy) {
-            allProducts.sort((a, b) => {
-              if (a[sortBy] < b[sortBy]) return sortOrder === SortOrder.ASC ? -1 : 1;
-              if (a[sortBy] > b[sortBy]) return sortOrder === SortOrder.ASC ? 1 : -1;
-              return 0;
-            });
+            ProductsUtils.sortByParameter(allProducts, sortBy, sortOrder);
         }
+
+        // Incase user requested pagination (limit and page parameters are required)
         if(limit && page) {
             const startIndex = (page - 1) * limit;
             const endIndex = startIndex + limit;
             allProducts = allProducts.slice(startIndex, endIndex);    
         }
         
+        // Incase user want to query by product name
         if(queryName) {
-            allProducts = allProducts.filter(product => product.name.includes(queryName));
+            allProducts = ProductsUtils.queryByParam(allProducts, queryName);
         }
 
+        // Incase user want to query by product description
         if(queryDesc) {
-            allProducts = allProducts.filter(product => product.description.includes(queryDesc));
+            allProducts = ProductsUtils.queryByParam(allProducts, queryDesc);
         }
         return response.status(200).send(allProducts);
     }
@@ -73,8 +75,7 @@ export class ProductsController {
         const now = new Date().toISOString();
         
         newProduct.id = uuidv4();
-        newProduct.created_at = now;
-        newProduct.updated_at = now;
+        newProduct.created_at = newProduct.updated_at = now;
         
         if(ProductsUtils.checkifNameUnique(newProduct.name)) {
             return this._repository
@@ -105,6 +106,7 @@ export class ProductsController {
         if(updatedData.description != "" && updatedData.description != undefined) {
             foundProduct.description = updatedData.description;
         }
+
         if(updatedData.price != undefined) {
             foundProduct.price = updatedData.price;
         }
@@ -136,6 +138,5 @@ export class ProductsController {
         return this._repository.delete(productId)
             .then(() => response.status(200).send(`Product with id ${productId} was delete successfully`))
             .catch((error) => response.status(500).send({ error: error }));
-        // return response.status(200).send("Product was deleted successfully");
     }
 }

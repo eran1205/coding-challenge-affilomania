@@ -1,8 +1,8 @@
 import { Product } from "./products/product.interface";
 import fs from 'fs';
 
-class ServerGlobal {
-    private static _instance: ServerGlobal;
+class DataSingelton {
+    private static _instance: DataSingelton;
     private _products: Product[];
 
     private constructor() {
@@ -15,7 +15,7 @@ class ServerGlobal {
             return this._instance;
         }
 
-        this._instance = new ServerGlobal();
+        this._instance = new DataSingelton();
         return this._instance;
     }
     public get products() {
@@ -23,4 +23,4 @@ class ServerGlobal {
     }
 }
 
-export default ServerGlobal;
+export default DataSingelton;
