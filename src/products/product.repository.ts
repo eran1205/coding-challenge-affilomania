@@ -13,4 +13,11 @@ export class ProductRepository implements IRepository<Product> {
         return newProduct;
     }
 
+    public async findByIdAsync(id: string): Promise<Product> {
+        return ServerGlobal.getInstance().products.find((product) => product.id === id) as Product;
+    }
+
+    public async delete(productId: string): Promise<unknown> {
+        return ServerGlobal.getInstance().products.splice(ServerGlobal.getInstance().products.findIndex(product => product.id === productId), 1);
+    }
 };
